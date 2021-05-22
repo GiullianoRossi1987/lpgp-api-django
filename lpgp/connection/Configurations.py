@@ -112,12 +112,16 @@ class Configurations:
 
     # Methods
 
-    def __init__(self, conf: AnyStr):
+    def __init__(self, conf):
         """
         """
-        with open(conf, "r") as cfl:
-            self.__conf_file = conf
-            self.__config = loads(cfl.read())
+        if conf is dict:
+            self.__config = conf
+            self.__conf_file = "internal"
+        else:
+            with open(conf, "r") as cfl:
+                self.__conf_file = conf
+                self.__config = loads(cfl.read())
 
     def __str__(self):
         return dumps(self.__config)
