@@ -42,7 +42,7 @@ class Connection:
         """
 
         """
-        return self.__conn is None or self.__conn == None
+        return self.__conn is not None or self.__conn != None
 
     def __cursor(self) -> Cursor:
         """
