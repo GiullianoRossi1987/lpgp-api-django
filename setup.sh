@@ -1,8 +1,6 @@
 #!/usr/bin/bash
 # Copyright (c) 2021 Copyright Holder All Rights Reserved.
 
-
-
 function checkIn(){
     ar=(${2// /})
     for i in ${ar[@]}
