@@ -4,7 +4,7 @@ from ..connection.Connection import Connection
 from typing import List, Tuple, Dict, AnyStr
 from base64 import b64encode, b64decode
 from datetime import datetime
-from binascii import B64Error
+from binascii import Error as B64Error
 
 
 class Proprietary:
@@ -12,14 +12,14 @@ class Proprietary:
 
     """
 
-    cd: int
-    name: str
-    email: str
-    passwd: str
-    img: str
-    key: str
-    checked: bool
-    creation: datetime
+    cd: int = 0
+    name: str = None
+    email: str = None
+    passwd: str = None
+    img: str = None
+    key: str = None
+    checked: bool = None
+    creation: datetime = None
 
     def __init__(self, lake = None):
         """
