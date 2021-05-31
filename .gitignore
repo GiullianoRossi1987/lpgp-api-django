@@ -2,3 +2,4 @@
 logs/
 config.json
 tests.py
+lpgp/*/__pycache__
