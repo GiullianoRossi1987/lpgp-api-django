@@ -49,7 +49,7 @@ class Signature:
         else:
             return None
 
-    def __init__(self, lake):
+    def __init__(self, lake = None):
         """
 
         """
@@ -70,6 +70,7 @@ class Signature:
             self.code = lake["vl_code"]
             self.vl_password = lake["vl_password"]
             self.dt_creation = lake["dt_creation"]
+        elif type(lake) is None or lake == None: pass
         else:
             raise RuntimeError("Invalid type to convert")
 
@@ -86,6 +87,7 @@ class Signature:
 
     def __dict__(self) -> dict:
         """
+
         """
         return {
             "cd_signature": self.id,
@@ -97,16 +99,19 @@ class Signature:
 
     def __tuple__(self) -> tuple:
         """
+
         """
         return self.id, self.prop_id, self.code, self.vl_password, self.dt_creation
 
     def __str__(self) -> str:
         """
+
         """
         return ", ".join(self.__tuple__())
 
     def sql(self, sep: str = ", ", br: bool = True) -> str:
         """
+
         """
         pool = []
         raw = self.__dict__()
@@ -131,20 +136,64 @@ class SignaturesTable(Connection):
 
     """
 
+    class SignatureNotFound(BaseException):
+        """
+
+        """
+
+        def __init__(self, sig):
+            """
+
+            """
+            super(f"\"{sig}\" signature not found")
+
+    def signature_exists(self, sig) -> bool:
+        """
+
+        """
+        if not self.is_connected: raise self.NotConnectedError()
+        cr = self.conn.cursor()
+        if type(sig) is int:
+            r1 = cr.execute(f"SELECT cd_signature FROM tb_signatures WHERE cd_signature = {sig}")
+            r2 = len(cr.fetchall()) == 1
+            cr.close()
+            return r2
+        elif type(sig) is Signature:
+            return self.signature_exists(sig.cd)
+        else: raise TypeError("Invalid reference type for signature")
+
+
     def ls_signatures(self) -> Tuple[Signature]:
         """
 
         """
+        if not self.is_connected: raise self.NotConnectedError()
         cr = self.conn.cursor()
         rsp = cr.execute("SELECT * FROM tb_signatures;")
-        return tuple([Signature(x) for x in cr.fetchall()])
+        rt = tuple([Signature(x) for x in cr.fetchall()])
+        cr.close()
+        return rt
 
     def get_signature(self, id: int) -> Signature:
+        """
+
+        """
+        if not self.is_connected: raise self.NotConnectedError()
+        if not self.signature_exists(id): raise self.SignatureNotFound(id)
         cr = self.conn.cursor()
         rsp = cr.execute("SELECT * FROM tb_signatures WHERE cd_signature = ?", id)
-        return Signature(cr.fetchone())
+        r = cr.fetchone()
+        cr.close()
+        return r
 
     def qr_signature(self, params: Signature) -> Tuple[Signature]:
         """
 
         """
+        if not self.is_connected: raise self.NotConnectedError()
+        cr = self.conn.cursor()
+        qr = params.sql(" AND ")
+        rso = cr.execute(f"SELECT * FROM tb_signatures WHERE {qr}")
+        r = cr.fetchall()
+        cr.close()
+        return tuple([Signature(x) for x in r])
