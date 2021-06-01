@@ -181,25 +181,6 @@ class ProprietariesTable(Connection):
         cursor.close()
         return data
 
-    def add_proprietary(self, prop: Proprietary):
-        """
-        """
-        if not self.is_connected: raise self.NotConnectedError()
-        if self.propExists(prp): raise self.ProprietaryAlreadyExists(prp.cd)
-        cursor = self.conn.cursor()
-        rsp = cursor.execute(f"INSERT INTO tb_proprietaries (nm_proprietary, vl_email, vl_password, vl_img, vl_key, checked, dt_creation) VALUES ({str(prop)});")
-        cursor.close()
-        return rsp
-
-    def del_proprietary(self, prop: Proprietary):
-        """
-        """
-        if not self.is_connected: raise self.NotConnectedError()
-        if not self.propExists(prp): raise self.ProprietaryNotFound(prp.cd)
-        cursor = self.conn.cursor()
-        rsp = cursor.execute("DELETE FROM tb_proprietaries WHERE " + prop.sql(" AND "))
-        cursor.close()
-        return rsp
 
     def auth_proprietary(self, prop: Proprietary) -> bool:
         """
