@@ -186,7 +186,7 @@ class ProprietariesTable(Connection):
         """
         """
         if not self.is_connected: raise self.NotConnectedError()
-        if not self.propExists(prp): raise self.ProprietaryNotFound(prp.cd)
+        if not self.propExists(prop): raise self.ProprietaryNotFound(prop.cd)
         compare = self.qr_proprietary(prop)[0]
         return compare.vl_key == prop.vl_key
 
