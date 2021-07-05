@@ -90,10 +90,10 @@ class Proprietary:
             "dt_creation": self.creation
         }
 
-    def __str_(self):
+    def __str__(self):
         """
         """
-        return ", ".join(self.__tuple__())
+        return ", ".join(map(lambda i: str(i), self.__tuple__()))
 
     def sql(self, sep = ",", break_seg: bool = True) -> str:
         """
@@ -218,3 +218,14 @@ class ProprietariesTable(Connection):
         rsp = cursor.execute(f"UPDATE FROM tb_proprietaries SET {snew} WHERE cd_proprietary = {old.cd};")
         cursor.close()
         return rsp
+
+    def id_getProp(self, prp: int) -> Proprietary:
+        """
+
+        """
+        if not self.is_connected: raise self.NotConnectedError()
+        cursor = self.conn.cursor()
+        rsp = cursor.execute(f"SELECT * FROM tb_proprietaries WHERE {prp};")
+        prop = cursor.fetchone()
+        cursor.close()
+        return Proprietary(prop)
