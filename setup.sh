@@ -34,6 +34,8 @@ function setEnv(){
         fi
         unset $MYSQL_LPGP_PASSWD_C
     fi
+    echo "Insert the path to the downloads control file: "; read SV_CTRL
+    if [ -z $SV_CTRL ]; then echo "Invalid download control file "; exit -1; fi
     dbs=$(mysql -h $MYSQL_LPGP_HOST -u $MYSQL_LPGP_USR --password="$MYSQL_LPGP_PASSWD" -e "SHOW DATABASES")
     for i in $dbs; do echo $i; done
     echo "Insert the database in use, the available databases are here above: "; read MYSQL_LPGP_DB
@@ -84,7 +86,11 @@ function setEnv(){
 \t\t\t            \"app_path\": \"$APP_PATH\",\n
 \t\t\t            \"lpgp_logs\": \"$LPGP_LOGS\", \n
 \t\t\t            \"sv_logs\": \"$SV_LOGS\"\n
-\t\t        }\n
+\t\t        },\n
+\t\t        \"controllers\": {\n
+\t\t\t           \"control_path\": \"$SV_CTRL\", \n
+\t\t        }
+}
 \t    }\n
 }
     """
