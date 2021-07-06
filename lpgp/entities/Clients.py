@@ -4,6 +4,9 @@ from ..connection.Connection import Connection
 from ..connection.Configurations import Configurations
 from typing import Tuple, AnyStr
 from datetime import datetime
+from json import loads as json_loads
+from json import dumps as json_dumps
+from time import strftime, strptime
 from .Proprietaries import Proprietary, ProprietariesTable
 
 
@@ -64,7 +67,8 @@ class Client:
         """
 
         """
-        return ", ".join(self.__tuple__())
+        return ", ".join(map(lambda i: str(i) if type(i) is not Proprietary else str(i.cd),
+         self.__tuple__()))
 
     def __dict__(self):
         """
@@ -129,3 +133,14 @@ class ClientsTable(Connection):
         data = tuple([Client(x) for x in cursor.fetchall()])
         cursor.close()
         return data
+
+    def id_getClient(self, id: int):
+        """
+
+        """
+        if not self.is_connected: raise self.NotConnectedError()
+        cursor = self.conn.cursor()
+        rsp = cursor.execute(f"SELECT * FROM tb_clients WHERE cd_client = {id}")
+        cl  = cursor.fetchone()
+        cursor.close()
+        return Client(cl)
