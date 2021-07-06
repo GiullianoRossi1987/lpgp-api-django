@@ -61,6 +61,11 @@ class Configurations:
         if len(self.__config) == 0: return None
         else: return self.raw["server"]["port"]
 
+    @property
+    def sv_ctrl_path(self):
+        if len(self.__config) == 0: return None
+        else: return self.raw["controllers"]["control_path"]
+
     # Properties setters
 
     @lpgp_mysql_host.setter
@@ -110,6 +115,12 @@ class Configurations:
         self.raw["server"]["hostname"] = host if len(host) > 0 else "0.0.0.0"
         self.__commit()
 
+    @sv_ctrl_path.setter
+    def sv_ctrl_path(self, path: str):
+        if len(self.__config) == 0:
+            raise self.ConfigurationsAcessError("Can't access the configurations file, there's no one loaded")
+        self.raw["controllers"]["control_path"] = path
+        self.__commit()
     # Methods
 
     def __init__(self, conf):
@@ -134,4 +145,3 @@ class Configurations:
             raise self.ConfigurationsAcessError("Can't access the configurations file, there's no one loaded")
         with open(self.__conf_file, "w+") as cfl:
             cfl.write(dumps(self.__config))
-
