@@ -3,4 +3,6 @@ logs/
 config.json
 tests.py
 lpgp/*/__pycache__
+lpgp/__pycache__
 util/*/__pycache__
+util/__pycache__
