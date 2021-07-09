@@ -6,3 +6,5 @@ lpgp/*/__pycache__
 lpgp/__pycache__
 util/*/__pycache__
 util/__pycache__
+*/__pycache__
+db.sqlite3
