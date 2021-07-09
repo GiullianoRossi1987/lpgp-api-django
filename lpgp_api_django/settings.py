@@ -25,8 +25,11 @@ SECRET_KEY = 'django-insecure-xfv4g@w5@d=94_%$#zfbc=g*+_2bc83ojnsnv277*^cnr*+sa*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "lpgp.api.com"]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SSL_SECURE_HOST = "lpgp.api.com"
 
 # Application definition
 
@@ -40,7 +43,8 @@ INSTALLED_APPS = [
     "lpgp",
     "pages",
     "util",
-    "lpgp_api_django"
+    "lpgp_api_django",
+    "sslserver"
 ]
 
 MIDDLEWARE = [
