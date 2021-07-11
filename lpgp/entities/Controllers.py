@@ -23,11 +23,7 @@ class Controller:
 
         """
 
-        def __init__(self, tk: str):
-            """
 
-            """
-            super("Invalid token: " + tk)
 
 
     def __init__(self, src):
@@ -89,10 +85,20 @@ class Controller:
         """
 
         """
-        return tuple(x for x in filter(lambda s: s["dtk"] == tk, self.cdownloads))
+        return tuple(x for x in filter(lambda s: s["token"] == tk, self.cdownloads))
 
     def get_cu(self, tk: str) -> tuple:
         """
 
         """
-        return tuple(x for x in filter(lambda s: s["dtk"] == tk, self.cuploads))
+        return tuple(x for x in filter(lambda s: s["token"] == tk, self.cuploads))
+
+    def d_get_sd(self, tk: str) -> tuple:
+        """
+
+        """
+        l = []
+        for x in self.sdownloads:
+            if x["dtk"] == tk:
+                l.append(x)
+        return tuple(l)

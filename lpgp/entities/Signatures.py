@@ -181,10 +181,10 @@ class SignaturesTable(Connection):
         if not self.is_connected: raise self.NotConnectedError()
         if not self.signature_exists(id): raise self.SignatureNotFound(id)
         cr = self.conn.cursor()
-        rsp = cr.execute("SELECT * FROM tb_signatures WHERE cd_signature = ?", id)
+        rsp = cr.execute("SELECT * FROM tb_signatures WHERE cd_signature = %s", (int(id), ))
         r = cr.fetchone()
         cr.close()
-        return r
+        return Signature(r)
 
     def qr_signature(self, params: Signature) -> Tuple[Signature]:
         """

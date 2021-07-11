@@ -82,6 +82,17 @@ class Client:
             "vl_root": self.is_root
         }
 
+    def enc_d(self) -> dict:
+        """
+
+        """
+        return {
+            "Client": self.id,
+            "Token": self.token,
+            "Proprietary": self.prop.cd,
+            "Dt": strftime("%Y-%M-%d %H:%m:%s")
+        }
+
     def sql(self, delimiter: str = ", ", br: bool = False) -> str:
         """
 

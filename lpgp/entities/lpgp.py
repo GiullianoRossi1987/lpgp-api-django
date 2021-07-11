@@ -1,13 +1,15 @@
 # encoding = utf-8
 # using namespace std
 from json import loads, dumps
-from ..connection import Connection, Configurations
+from ..connection import Connection
+from ..connection.Configurations import Configurations
 from .Proprietaries import Proprietary, ProprietariesTable
 from .Signatures import Signature, SignaturesTable
 from .Clients import ClientsTable, Client
 from typing import AnyStr
 from datetime import datetime
 from .Controllers import Controller
+
 
 
 class LPGPSignature:
@@ -35,18 +37,19 @@ class LPGPSignature:
         lpgp_s = lpgp.split(delimiter)
         json_d = ""
         for c in lpgp_s:
-            json_d += chr(c)
+            json_d += chr(int(c))
         return loads(json_d)
 
     @staticmethod
-    def encode(lpgp, delimiter: str = "/") -> LPGPSignature:
+    def encode(lpgp: dict, delimiter: str = "/"):
         """
 
         """
+        j_lpgp = dumps(lpgp)
         con_a = []
-        for l in lpgp: con_a.append(str(ord(l)))
+        for l in j_lpgp: con_a.append(str(ord(l)))
         lpgp_e = delimiter.join(con_a)
-        return LPGPSignature(lpgp_e)
+        return lpgp_e
 
     def authenticate(self):
         """
@@ -55,17 +58,14 @@ class LPGPSignature:
         conf = Configurations("config.json")
         sig_t = SignaturesTable(conf)
         ctrl = Controller(conf)
-        try:
-            ext = sig_t.get_signature(self.id)
-        except SignaturesTable.SignatureNotFound:
-            self.__valid = False
-        dre = ctrl.get_sd(self.dt_token)
-        if len(dre) == 0: raise Controller.InvalidToken(self.dt_token)
+        ext = sig_t.get_signature(self.id)
+        dre = ctrl.d_get_sd(self.dt_token)
+        # if len(dre) == 0: raise Controller.InvalidToken(self.dt_token)
         # Starts comparing
         bool_block = [
             ext.vl_password == self.signature,
-            ext.prop_id == self.proprietary,
-            dre["signature"] == self.id
+            ext.prop_id == self.proprietary.cd,
+            # dre["signature"] == self.id
         ]
         self.__valid = all(bool_block)
 
@@ -74,11 +74,15 @@ class LPGPSignature:
         """
 
         """
+        prp_t = ProprietariesTable(Configurations("config.json"))
         if type(lake) is str:
             dct = LPGPSignature.decode(lake)
             self.date_creation = dct["Date-Creation"]
-            self.proprietary = Proprietary()
-            self.proprietary.cd = int(dct["Proprietary"])
+            # self.proprietary = Proprietary()
+            # self.proprietary.cd = int(dct["Proprietary"])
+            prp = Proprietary()
+            prp.name = dct["Proprietary"]
+            self.proprietary = prp_t.qr_proprietary(prp)[0]
             self.id = int(dct["ID"])
             self.signature = dct["Signature"]
             self.dt_token = dct["DToken"]
@@ -124,7 +128,7 @@ class LPGPClient:
         ascii_con = content.split("/")
         json_s = ""
         for char in ascii_con: json_s += chr(int(char))
-        return json_loads(json_s)
+        return loads(json_s)
 
 
     def __init__(self, **file_data):
@@ -144,11 +148,11 @@ class LPGPClient:
                 self.download_tk = decoded["cdtk"]
         elif "key" in file_data.keys():
             data = LPGPClient.decode(file_data["key"])
-            self.client_pk =  int(data["client"])
-            self.prop_pk = int(data["proprietary"])
-            self.token = data["token"]
-            self.download_tk = data["download_tk"]
-            self.date_creation = data["dt"]
+            self.client_pk =  int(data["Client"])
+            self.prop_pk = int(data["Proprietary"])
+            self.token = data["Token"]
+            self.download_tk = data["cdtk"]
+            self.date_creation = data["Dt"]
         elif len(file_data) == 5:
             # Loads the direct data
             self.client_pk = file_data["client"].id if type(file_data["client"]) is Client else int(file_data["client"])
@@ -209,9 +213,10 @@ class LPGPClient:
             ext = clt.id_getClient(self.client_pk)
         except:
             return False
-        cre = ctrl.get_cd(self.download_tk)
-        if len(cre) == 0: raise ctrl.InvalidToken(self.download_tk)
+        # Removed download token authentication
+        # cre = ctrl.get_cd(self.download_tk)
+        # if len(cre) == 0: raise ctrl.InvalidToken(self.download_tk)
         return all([
             ext.token == self.token,
-            ext.prop.id == self.prop_pk
+            ext.prop.cd == self.prop_pk
         ])
