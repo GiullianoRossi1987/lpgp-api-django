@@ -36,14 +36,17 @@ class Proprietary:
             self.checked = True if int(lake[6]) == 1 else False
             self.creation = lake[7]
         elif type(lake) is dict:
-            self.cd = int(lake["cd_proprietary"])
-            self.name = str(lake["nm_proprietary"])
-            self.email = str(lake["vl_email"])
-            self.passwd = str(lake["vl_password"])
-            self.img = str(lake["vl_img"])
-            self.key = str(lake["vl_key"])
-            self.checked = True if int(lake["checked"]) == 1 else False
-            self.creation = lake["dt_creation"]
+            self.cd = int(lake["cd_proprietary"]) if "cd_proprietary" in lake.keys() else None
+            self.name = lake["nm_proprietary"] if "nm_proprietary" in lake.keys() else None
+            self.email = str(lake["vl_email"]) if "vl_email" in lake.keys() else None
+            self.passwd = str(lake["vl_password"]) if "vl_password" in lake.keys() else None
+            self.img = str(lake["vl_img"]) if "vl_img" in lake.keys() else None
+            self.key = str(lake["vl_key"]) if "vl_key" in lake.keys() else None
+            if "checked" in lake.keys():
+                self.checked = True if int(lake["checked"]) == 1 else False
+            else:
+                self.checked = None
+            self.creation = lake["dt_creation"] if "dt_creation" in lake.keys() else None
         else: pass
 
     def setData(self, lake):
@@ -60,14 +63,17 @@ class Proprietary:
             self.checked = True if int(lake[6]) == 1 else False
             self.creation = lake[7]
         elif type(lake) is dict:
-            self.cd = int(lake["cd_proprietary"])
-            self.name = str(lake["nm_proprietary"])
-            self.email = str(lake["vl_email"])
-            self.passwd = str(lake["vl_password"])
-            self.img = str(lake["vl_img"])
-            self.key = str(lake["vl_key"])
-            self.checked = True if int(lake["checked"]) == 1 else False
-            self.creation = lake["dt_creation"]
+            self.cd = int(lake["cd_proprietary"]) if "cd_proprietary" in lake.keys() else None
+            self.name = lake["nm_proprietary"] if "nm_proprietary" in lake.keys() else None
+            self.email = str(lake["vl_email"]) if "vl_email" in lake.keys() else None
+            self.passwd = str(lake["vl_password"]) if "vl_password" in lake.keys() else None
+            self.img = str(lake["vl_img"]) if "vl_img" in lake.keys() else None
+            self.key = str(lake["vl_key"]) if "vl_key" in lake.keys() else None
+            if "checked" in lake.keys():
+                self.checked = True if int(lake["checked"]) == 1 else False
+            else:
+                self.checked = None
+            self.creation = lake["dt_creation"] if "dt_creation" in lake.keys() else None
         else: raise TypeError("Invalid type of the data input, expecting list, tuple or dict")
 
     def __tuple__(self) -> tuple:
@@ -177,6 +183,8 @@ class ProprietariesTable(Connection):
         """
         if not self.is_connected: raise self.NotConnectedError()
         cursor = self.conn.cursor()
+        # with open("logs/debug.log", "w") as dbg:
+        #     dbg.write("SELECT * FROM tb_proprietaries WHERE " + params.sql(" AND "))
         rsp = cursor.execute("SELECT * FROM tb_proprietaries WHERE " + params.sql(" AND "))
         data = tuple([Proprietary(x) for x in cursor.fetchall()])
         cursor.close()

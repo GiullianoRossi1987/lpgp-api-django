@@ -55,3 +55,31 @@ def login(request):
             "response": str(e)
         }
     return JsonResponse(dct)
+
+@csrf_exempt
+def get(request):
+    """
+
+    """
+    try:
+        if not val_client(request.POST["client-key"]):
+            raise Exception("Invalid Client")
+        prp_t = ProprietariesTable(Configurations("config.json"))
+        prp = Proprietary({k: i for k, i in request.POST.items()})
+        req = prp_t.qr_proprietary(prp)
+        if len(req) > 0:
+            dct = {
+                "status": 0,
+                "response": tuple(x.__dict__() for x in req)
+            }
+        else:
+            dct = {
+                "status": 2,
+                "response": "No proprietaries found"
+            }
+    except Exception as e:
+        dct = {
+            "status": 1,
+            "response": str(e)
+        }
+    return JsonResponse(dct)
