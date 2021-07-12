@@ -22,5 +22,5 @@ urlpatterns = [
     path("client/", include("pages.clients.urls")),
     path("signature/", include("pages.signatures.urls")),
     path("proprietary/", include("pages.proprietaries.urls")),
-    # path("user/", include("pages.users.urls")), 
+    path("user/", include("pages.users.urls")), 
 ]
