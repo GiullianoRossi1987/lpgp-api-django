@@ -20,5 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("pages.greetings.urls")),
     path("client/", include("pages.clients.urls")),
-    path("signature/", include("pages.signatures.urls"))
+    path("signature/", include("pages.signatures.urls")),
+    path("proprietary/", include("pages.proprietary.urls")),
+    path("user/", include("pages.user.urls")), 
 ]
