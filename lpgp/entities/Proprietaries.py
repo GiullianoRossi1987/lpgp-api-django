@@ -5,6 +5,7 @@ from typing import List, Tuple, Dict, AnyStr
 from base64 import b64encode, b64decode
 from datetime import datetime
 from binascii import Error as B64Error
+from json import loads, dumps
 
 
 class Proprietary:
@@ -203,7 +204,7 @@ class ProprietariesTable(Connection):
         try:
             _ = b64decode(passwd)
             # already encoded occasion
-            match = res[3] == passwd
+            match = res[3] == passwd.decode()
         except B64Error:
             match = res[3] == b64encode(passwd)
         return match
