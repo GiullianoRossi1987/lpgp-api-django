@@ -16,7 +16,7 @@ def index(request):
 
     """
     return render(request, "forbidden_err.html", context={
-        "bootstrap_dir": default.BOOTSTRAP_PATH 
+        "bootstrap_dir": default.BOOTSTRAP_PATH
     })
 
 
@@ -80,7 +80,12 @@ def get(request):
         if not val_client(request.POST["client-key"]):
             raise Exception("Invalid client ")
         if "key" in request.POST.keys():
-            lc
+            ls = LPGPSignature(request.POST["key"])
+            sig_t = SignaturesTable(Configurations("config.json"))
+            dct = {
+                "status": 0,
+                "response": sig_t.get_signature(ls.id).__dict__()
+            }
     except Exception as e:
         dct = {
             "status": 1,
