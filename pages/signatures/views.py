@@ -5,7 +5,9 @@ from lpgp.entities.Signatures import Signature, SignaturesTable
 from lpgp.entities.lpgp import LPGPSignature, LPGPClient
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
 from json import loads, dumps
+from util import default
 
 sg_tb = SignaturesTable(Configurations("config.json"))
 
@@ -13,7 +15,9 @@ def index(request):
     """
 
     """
-    return HttpResponse("Welcome to the cumzone")
+    return render(request, "forbidden_err.html", context={
+        "bootstrap_dir": default.BOOTSTRAP_PATH 
+    })
 
 
 def ls(request):
