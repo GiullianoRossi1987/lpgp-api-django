@@ -8,6 +8,7 @@ from lpgp.entities.Proprietaries import Proprietary, ProprietariesTable
 from json import dumps
 from lpgp.entities.lpgp import LPGPClient
 from base64 import b64encode
+from util.default import *
 
 
 def index(request):
@@ -16,18 +17,6 @@ def index(request):
     """
     return render(request, "forbidden_err.html")
 
-def val_client(client) -> bool:
-    """
-
-    """
-    try:
-        lc = LPGPClient(key=client)
-        # lc.authenticate()
-        if not lc.is_valid: raise Exception("Invalid Client Key")
-        return True
-        # DEBUG: raise Exception("Test error")
-    except Exception as e:
-        return False
 
 @csrf_exempt
 def login(request):

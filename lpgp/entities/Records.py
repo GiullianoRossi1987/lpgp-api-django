@@ -6,6 +6,7 @@ from typing import AnyStr, Tuple
 from .Clients import Client
 from datetime import datetime
 from time import strftime, strptime
+from json import dumps
 
 class ClientRecord:
     """
@@ -20,7 +21,7 @@ class ClientRecord:
         """
 
         """
-        if type(lake) is tuple or list:
+        if type(lake) is tuple or type(lake) is list:
             self.rec_id = lake[0]
             self.client_id = lake[1]
             self.dt_access = lake[2]
@@ -30,7 +31,8 @@ class ClientRecord:
             self.client_id = lake["id_client"]
             self.dt_access = lake["dt_access"]
             self.success = bool(lake["vl_success"])
-        elif type(lake) is None: pass
+        elif type(lake) is None or lake == None:
+            pass
         else: raise TypeError("Invalid lake type")
 
     def __dict__(self) -> dict:
@@ -40,7 +42,7 @@ class ClientRecord:
         return {
             "cd_access": self.rec_id,
             "id_client": self.client_id,
-            "dt_access": self.dt_access,
+            "dt_access": str(self.dt_access),
             "success": self.success
         }
 
@@ -106,7 +108,7 @@ class RecordsTable(Connection):
         """
         if not self.is_connected: raise self.NotConnectedError()
         cc = self.conn.cursor()
-        rtr = cc.execute("SELECT * FROM tb_access WHERE cd_access = %d;", (id.rec_id if type(id) is ClientRecord else int(id),))
+        rtr = cc.execute("SELECT * FROM tb_access WHERE cd_access = %s;", (id.rec_id if type(id) is ClientRecord else int(id),))
         data = cc.fetchone()
         cc.close()
         return len(data) > 0
@@ -118,7 +120,7 @@ class RecordsTable(Connection):
         if not self.is_connected: raise self.NotConnectedError()
         if not self.__check_id(id): raise self.RecordNotFound(id)
         cc = self.conn.cursor()
-        rtr = cc.execute("SELECT * FROM tb_access WHERE cd_access = %d;", (id,))
+        rtr = cc.execute("SELECT * FROM tb_access WHERE cd_access = %s;", (id,))
         data = cc.fetchone()
         cc.close()
         return ClientRecord(data)
@@ -129,6 +131,9 @@ class RecordsTable(Connection):
         """
         if not self.is_connected: raise self.NotConnectedError()
         cc = self.conn.cursor()
-        rtr = cc.execute("INSERT INTO tb_access (id_client, vl_success) VALUES (%d, %d);",
+        rtr = cc.execute("INSERT INTO tb_access (id_client, vl_success) VALUES (%s, %s);",
         (new_rec.client_id, int(new_rec.success)))
         cc.close()
+        # DEBUG
+        with open("logs/debug.log", "w") as dbg:
+            dbg.write(dumps(self.ls_records()[-1].__dict__()))
