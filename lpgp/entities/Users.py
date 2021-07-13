@@ -34,14 +34,14 @@ class User:
             self.checked  = bool(int(lake[6]))
             self.creation = lake[7]
         elif type(lake) is dict:
-            self.id       = int(lake["cd_user"])
-            self.name     = str(lake["nm_user"])
-            self.email    = str(lake["vl_email"])
-            self.passwd   = str(lake["vl_password"])
-            self.img      = str(lake["vl_img"])
-            self.key      = str(lake["vl_key"])
-            self.checked  = bool(int(lake["checked"]))
-            self.creation = lake["dt_creation"]
+            self.id       = int(lake["cd_user"]) if "cd_user" in lake.keys() else None
+            self.name     = str(lake["nm_user"]) if "cd_user" in lake.keys() else None
+            self.email    = str(lake["vl_email"]) if "cd_user" in lake.keys() else None
+            self.passwd   = str(lake["vl_password"]) if "cd_user" in lake.keys() else None
+            self.img      = str(lake["vl_img"]) if "cd_user" in lake.keys() else None
+            self.key      = str(lake["vl_key"]) if "cd_user" in lake.keys() else None
+            self.checked  = bool(int(lake["checked"])) if "cd_user" in lake.keys() else None
+            self.creation = lake["dt_creation"] if "cd_user" in lake.keys() else None
         elif lake == None or type(lake) is None: pass
         else: raise TypeError("Invalid type of data importing for user")
 
@@ -163,7 +163,7 @@ class UsersTable(Connection):
         try:
             _ = b64decode(passwd)
             # already encoded occasion
-            match = res[3] == passwd
+            match = res[3] == passwd.decode()
         except B64Error:
             match = res[3] == b64encode(passwd)
         return match
